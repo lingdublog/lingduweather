@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <script src="js/mui.min.js"></script>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+    <script type="text/javascript" charset="utf-8">
+      	mui.init();
+    </script>
+    <script src="js/laytpl.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+<style>
+	*{margin: 0;padding: 0;}
+	body{background: #3ac4d7;color: #fff;}
+	ul,li{list-style: none;}
+	.null{margin-top: 10rem;text-align: center;color: #c3e112;font-size: 22px;}
+	.list{margin-top: 4rem;}
+	li{width: 20%;float: left;}
+	li div{text-align: center;}
+	li img{width: 80%;}
+	.day{color: #95eb25;}
+	.type{margin-top: 0.5rem;}
+	.high{color: red;}
+	.low{color: #007AFF;}
+	.fengxiang,.fengli{font-size: 14px;}
+</style>
+	
+<script id="demo" type="text/html">
+	<h1>城市：{{ d.city }}</h1>
+	<h2>当前温度：{{ d.wendu }}°C</h2>
+	<ul class="list">
+		{{#  for(var i = 0, len = d.forecast.length; i < len; i++){   }}
+		 <li>
+	    	<div class="date">{{ d.forecast[i].date }}</div>
+	    	<div class="day">{{ d.forecast[i].date }}</div>
+	    	<div class="type">{{ d.forecast[i].type }}</div>
+	    	<div class="high">{{ d.forecast[i].high }}</div>
+	    	<div class="low">{{ d.forecast[i].low }}</div>
+	    	<div class="fengxiang">{{ d.forecast[i].fengxiang }}</div>
+	    	<div class="fengli">{{ d.forecast[i].fengli }}</div>
+	    </li>
+		{{#  } }}
+	</ul>
+</script>
+
+<header class="mui-bar mui-bar-nav">
+	<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" href="index.html"></a>
+	<h1 class="mui-title">零度天气</h1>
+</header>
+<div id="view" style="margin-top: 6rem;"><p class="null">加载中……</p></div>
+
+
+<script type="text/javascript">
+window.onload = function(){
+  //从服务器获取数据
+
+ 	var len;
+    var cityname = localStorage.cityname; 
+    var view = document.getElementById("view");
+  //业务数据获取完毕，并已插入当前页面DOM；
+  //注意：若为ajax请求，则需将如下代码放在处理完ajax响应数据之后；
+  mui.ajax('http://wthrcdn.etouch.cn/weather_mini?city='+cityname,{
+  	
+	async:true,
+	dataType:'json',//服务器返回json格式数据
+	type:'GET',//HTTP请求类型
+//	timeout:10000,//超时时间设置为10秒；
+	success:function(data){
+		if (data.status == 1000) {
+		
+		//服务器返回响应，根据响应结果，分析是否登录成功；
+		var data = data.data;
+//			alert(.city)
+		len = data.forecast.length;
+		var gettpl = document.getElementById('demo').innerHTML;
+		laytpl(gettpl).render(data, function(html){
+		    view.innerHTML = html;
+		    
+		    for (var i=0;i<len;i++) {
+		    	//日期
+		    	var str = document.querySelectorAll(".date")[i].innerHTML;
+		    	document.querySelectorAll(".date")[i].innerHTML = str.substring(0,str.length-3);
+		    	//星期
+		    	document.querySelectorAll(".day")[i].innerHTML = str.substring(str.length-3);
+		    	//天气
+				switch (document.querySelectorAll(".type")[i].innerHTML){
+					case '晴':
+						document.querySelectorAll(".type")[i].innerHTML += '<img src="images/qing.png">';
+						break;
+					case '多云':
+						document.querySelectorAll(".type")[i].innerHTML += '<img src="images/duoyun.png">';
+						break;
+					case '阴':
+						document.querySelectorAll(".type")[i].innerHTML += '<img src="images/yin.png">';
+						break;
+					case '小雨':
+						document.querySelectorAll(".type")[i].innerHTML += '<img src="images/xiaoyu.png">';
+						break;
+					case '中雨':
+						document.querySelectorAll(".type")[i].innerHTML += '<img src="images/zhongyu.png">';
+						break;
+					case '大雨':
+						document.querySelectorAll(".type")[i].innerHTML += '<img src="images/dayu.png">';
+						break;
+					case '阵雨':
+						document.querySelectorAll(".type")[i].innerHTML += '<img src="images/zhenyu.png">';
+						break;
+					case '雷阵雨':
+						document.querySelectorAll(".type")[i].innerHTML += '<img src="images/leizhenyu.png">';
+						break;
+				}
+				//高温
+				var str2 =	document.querySelectorAll(".high")[i].innerHTML;
+				document.querySelectorAll(".high")[i].innerHTML = str2.substr(3);
+				var str3 =	document.querySelectorAll(".low")[i].innerHTML;
+				document.querySelectorAll(".low")[i].innerHTML = str3.substr(3);
+				
+			
+			}
+		   
+		});
+//		如果返回结果不对
+		}else{
+			view.innerHTML ='';
+			alert('参数错误，请重新输入');
+			 mui.back();
+		}
+	},
+	error:function(xhr,type,errorThrown){
+		//异常处理；
+		console.log(type);
+	}
+
+	
+}) 
+
+/*	
+mui.plusReady(function(){
+	//返回键退出
+	plus.key.addEventListener("backbutton",function(){
+		var con = confirm('是否确定退出');
+		if (con) {
+			plus.runtime.quit();
+		}
+	});
+});
+*/
+  
+
+}
+
+
+
+/*var data = {
+    title: '前端攻城师',
+    list: [{name: '贤心', city: '杭州'}, {name: '谢亮', city: '北京'}, {name: '浅浅', city: '杭州'}, {name: 'Dem', city: '北京'}]
+};*/
+	
+	
+</script>
+</body>
+</html>

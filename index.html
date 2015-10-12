@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <script src="js/mui.min.js"></script>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+    <script type="text/javascript" charset="utf-8">
+      	mui.init();
+      	
+    </script>
+    <style type="text/css">
+    body,.mui-content{background: #3ac4d7;color: #fff;}
+    	button{margin: 1rem;}
+    	.mui-search .mui-placeholder{color: #fff;}
+    	.other{margin-top: 3rem;padding: 2rem;}
+    	.other p{color: #fff;font-size: 1.05rem;}
+    </style>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav">
+		<h1 class="mui-title">零度天气</h1>
+	</header>
+	<div class="mui-content">
+		<div class="mui-input-row mui-search">
+			<input type="search" class="mui-input-clear" id="search" placeholder="输入你要查看的城市天气" style="margin-bottom: 0;background: none;">
+		</div>
+		<div id="btn" style="height: 2rem;text-indent: 2rem;line-height: 2rem;"></div>
+	</div>
+	<div class="content" style="margin-top: 30px;">
+		<h2>全国常用城市天气</h2>
+		<button class="mui-btn mui-btn-primary">北京</button>
+		<button class="mui-btn mui-btn-primary">上海</button>
+		<button class="mui-btn mui-btn-primary">广州</button>
+		<button class="mui-btn mui-btn-primary">深圳</button>
+		<button class="mui-btn mui-btn-primary">杭州</button>
+		<button class="mui-btn mui-btn-primary">天津</button>
+		<button class="mui-btn mui-btn-primary">南京</button>
+		<button class="mui-btn mui-btn-primary">合肥</button>
+		<button class="mui-btn mui-btn-primary">济南</button>
+		<button class="mui-btn mui-btn-primary">海南</button>
+		<button class="mui-btn mui-btn-primary">重庆</button>
+		<button class="mui-btn mui-btn-primary">郑州</button>
+	</div>
+	<div class="other">
+		<p>下面不知道放点啥了，欢迎提意见</p>
+		<p>Email：jiuri2000@126.com</p>
+	</div>
+	<script type="text/javascript">
+		var oSearch = document.getElementById("search");
+		var oBtn = document.getElementById("btn");
+/*		//进入页面清空input
+		oSearch.value = '';
+		oBtn.innerHTML = '';*/
+		
+		//删除左右两端的空格//删除左右两端的空格
+		function trim(str){
+	　　     return str.replace(/(^\s*)|(\s*$)/g, "");
+	　　 }
+		
+		oSearch.oninput = function () {
+			if (!oSearch.value) {
+				oBtn.innerHTML = '';
+			}else{
+				oBtn.innerHTML = this.value+'  &nbsp;&nbsp;点击搜索';
+			}
+		}
+		oBtn.addEventListener('tap', function() {
+			var cityName = trim(oBtn.innerHTML);
+			localStorage.cityname = cityName;
+			oSearch.value = '';
+			oSearch.blur();
+			oBtn.innerHTML = '';
+		  //打开关于页面
+//		  localStorage.cityname = cityName;
+//		  location = 'main.html';
+		   mui.openWindow({
+		    url: 'main.html'
+			
+		  });
+		});
+		var aBtn = document.querySelectorAll("button");
+		for (var i=0;i<aBtn.length;i++) {
+			aBtn[i].addEventListener('tap', function() {
+				var cityName = trim(this.innerHTML);
+				localStorage.cityname = cityName;
+			   mui.openWindow({
+			    url: 'main.html'
+			  });
+			});
+		}
+		
+mui.plusReady(function(){
+	//返回键退出
+	plus.key.addEventListener("backbutton",function(){
+		var con = confirm('是否确定退出');
+		if (con) {
+			plus.runtime.quit();
+		}
+	});
+});
+		
+	</script>
+</body>
+</html>
